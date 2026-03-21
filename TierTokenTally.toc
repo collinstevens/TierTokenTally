@@ -1,0 +1,13 @@
+## Interface: 120001
+## Title: Tier Token Tally
+## Notes: Displays tier token distribution for your raid group via a minimap button and slash commands.
+## IconTexture: Interface\Icons\INV_Enchant_VoidSphere
+## Author: Collin Stevens
+## Version: v1.0.0
+## SavedVariables: TierTokenTallyDB
+## X-Website: https://github.com/collinstevens/TierTokenTally
+## X-Curse-Project-ID: 1495489
+## X-Wago-ID: QN53VXKB
+## X-WoWI-ID:
+
+TierTokenTally.lua

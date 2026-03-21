@@ -1,0 +1,11 @@
+package-as: TierTokenTally
+
+ignore:
+  - .github
+  - .vscode
+  - .gitignore
+  - README.md
+  - logo.png
+  - logo.svg
+  - LICENSE
+  - Oilvl12.0.14
