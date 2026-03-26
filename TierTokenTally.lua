@@ -36,10 +36,6 @@ local TOKEN_CLASSES = {
     Voidwoven  = "(Priest, Mage, Warlock)",
 }
 
-ns.CLASSID_TO_TOKEN = CLASSID_TO_TOKEN
-ns.TOKEN_ORDER = TOKEN_ORDER
-ns.TOKEN_COLORS = TOKEN_COLORS
-
 ---------------------------------------------------------------------------
 -- Saved variables
 ---------------------------------------------------------------------------
@@ -76,10 +72,10 @@ local function CountGroupTokens()
             count = count + 1
         end
         for i = 1, GetNumGroupMembers() - 1 do
-            local _, _, cid = UnitClass("party" .. i)
-            local t = cid and CLASSID_TO_TOKEN[cid]
-            if t then
-                tokens[t] = tokens[t] + 1
+            local _, _, classID = UnitClass("party" .. i)
+            local token = classID and CLASSID_TO_TOKEN[classID]
+            if token then
+                tokens[token] = tokens[token] + 1
                 count = count + 1
             end
         end
@@ -114,8 +110,9 @@ end
 ---------------------------------------------------------------------------
 
 local function ShowMinimapTooltip(anchor)
+    local version = C_AddOns.GetAddOnMetadata(ADDON_NAME, "Version")
     GameTooltip:SetOwner(anchor, "ANCHOR_LEFT")
-    GameTooltip:AddLine("Tier Token Tally", 1, 1, 1)
+    GameTooltip:AddLine("Tier Token Tally v" .. version, 1, 1, 1)
 
     local tokens, count = CountGroupTokens()
     if count > 0 then
@@ -129,8 +126,8 @@ local function ShowMinimapTooltip(anchor)
     end
 
     GameTooltip:AddLine(" ")
-    GameTooltip:AddLine("left-click to report to raid chat", 0.7, 0.7, 0.7)
-    GameTooltip:AddLine("right-click to open settings", 0.7, 0.7, 0.7)
+    GameTooltip:AddLine("Left-Click to report to raid chat", 0.7, 0.7, 0.7)
+    GameTooltip:AddLine("Right-Click to open settings", 0.7, 0.7, 0.7)
     GameTooltip:Show()
 end
 
@@ -147,6 +144,7 @@ end
 local ICON = "Interface\\Icons\\INV_Chest_Plate16"
 
 local minimapButton = CreateFrame("Button", "TierTokenTallyMinimapButton", Minimap)
+minimapButton:Hide()
 minimapButton:SetSize(32, 32)
 minimapButton:SetFrameStrata("MEDIUM")
 minimapButton:SetFrameLevel(8)
@@ -191,8 +189,7 @@ end)
 -- Dragging to reposition around minimap edge
 minimapButton:RegisterForDrag("LeftButton")
 minimapButton:SetScript("OnDragStart", function(self)
-    self.dragging = true
-    self:SetScript("OnUpdate", function(self)
+    self:SetScript("OnUpdate", function()
         local mx, my = Minimap:GetCenter()
         local cx, cy = GetCursorPosition()
         local scale = Minimap:GetEffectiveScale()
@@ -203,7 +200,6 @@ minimapButton:SetScript("OnDragStart", function(self)
 end)
 
 minimapButton:SetScript("OnDragStop", function(self)
-    self.dragging = false
     self:SetScript("OnUpdate", nil)
 end)
 
@@ -213,7 +209,6 @@ end)
 
 local function CreateSettingsPanel()
     local panel = CreateFrame("Frame")
-    panel.name = ADDON_NAME
 
     local title = panel:CreateFontString(nil, "ARTWORK", "GameFontNormalLarge")
     title:SetPoint("TOPLEFT", 16, -16)
@@ -237,7 +232,7 @@ local function CreateSettingsPanel()
         end
     end)
 
-    settingsCategory = Settings.RegisterCanvasLayoutCategory(panel, panel.name)
+    settingsCategory = Settings.RegisterCanvasLayoutCategory(panel, C_AddOns.GetAddOnMetadata(ADDON_NAME, "Title"))
     Settings.RegisterAddOnCategory(settingsCategory)
 end
 
@@ -246,9 +241,11 @@ end
 ---------------------------------------------------------------------------
 
 local eventFrame = CreateFrame("Frame")
-eventFrame:RegisterEvent("PLAYER_LOGIN")
+eventFrame:RegisterEvent("ADDON_LOADED")
 eventFrame:SetScript("OnEvent", function(self, event, arg1)
-    if event == "PLAYER_LOGIN" then
+    if event == "ADDON_LOADED" and arg1 == ADDON_NAME then
+        self:UnregisterEvent("ADDON_LOADED")
+
         -- Initialize saved variables
         TierTokenTallyDB = TierTokenTallyDB or {}
         db = TierTokenTallyDB
@@ -257,8 +254,8 @@ eventFrame:SetScript("OnEvent", function(self, event, arg1)
 
         -- Position and show/hide minimap button
         UpdateMinimapButtonPosition()
-        if not db.showMinimap then
-            minimapButton:Hide()
+        if db.showMinimap then
+            minimapButton:Show()
         end
 
         -- Create settings panel
@@ -271,6 +268,7 @@ end)
 ---------------------------------------------------------------------------
 
 SLASH_TIERTOKENTALLY1 = "/tiertokentally"
+SLASH_TIERTOKENTALLY2 = "/ttt"
 SlashCmdList["TIERTOKENTALLY"] = function(msg)
     msg = strtrim(msg):lower()
     if msg == "report" then
