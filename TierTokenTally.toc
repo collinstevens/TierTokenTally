@@ -1,7 +1,7 @@
 ## Interface: 120001
 ## Title: Tier Token Tally
 ## Notes: Displays tier token distribution for your raid group via a minimap button and slash commands.
-## IconTexture: Interface\Icons\INV_Enchant_VoidSphere
+## IconTexture: Interface\Icons\INV_Chest_Plate16
 ## Author: Collin Stevens
 ## Version: v1.0.0
 ## SavedVariables: TierTokenTallyDB

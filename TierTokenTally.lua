@@ -144,7 +144,7 @@ end
 -- Minimap button (no libraries)
 ---------------------------------------------------------------------------
 
-local ICON = "Interface\\Icons\\INV_Enchant_VoidSphere"
+local ICON = "Interface\\Icons\\INV_Chest_Plate16"
 
 local minimapButton = CreateFrame("Button", "TierTokenTallyMinimapButton", Minimap)
 minimapButton:SetSize(32, 32)
