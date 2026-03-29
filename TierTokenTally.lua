@@ -112,7 +112,7 @@ end
 local function ShowMinimapTooltip(anchor)
     local version = C_AddOns.GetAddOnMetadata(ADDON_NAME, "Version")
     GameTooltip:SetOwner(anchor, "ANCHOR_LEFT")
-    GameTooltip:AddLine("Tier Token Tally v" .. version, 1, 1, 1)
+    GameTooltip:AddLine("Tier Token Tally " .. version, 1, 1, 1)
 
     local tokens, count = CountGroupTokens()
     if count > 0 then
