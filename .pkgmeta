@@ -1,13 +1,12 @@
 package-as: TierTokenTally
 
 ignore:
+  - .claude
   - .github
   - .vscode
   - .gitignore
-  - README.md
-  - logo.png
-  - logo.svg
-  - LICENSE
-  - Oilvl12.0.14
-  - CLAUDE.md
   - media
+  - scripts
+  - README.md
+  - CLAUDE.md
+  - Oilvl12.0.14
